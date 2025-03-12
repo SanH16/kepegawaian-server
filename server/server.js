@@ -20,14 +20,11 @@ import PunishmentRoute from "./routes/PunishmentRoute.js";
 import { seedAdmin } from "./config/seedAdmin.js";
 
 dotenv.config();
-const port = process.env.PORT;
+const port = process.env.PORT || 5000;
+const CLIENT_URL = process.env.CLIENT_URL || "https://kepegawaian-client.vercel.app";
 
 const app = express();
-const sessionStore = SequelizeStore(session.Store);
-
-const store = new sessionStore({
-  db: db,
-});
+const sessionStore = new SequelizeStore({ db });
 
 (async () => {
   try {
@@ -37,7 +34,7 @@ const store = new sessionStore({
     // Uncomment ini HANYA kalau ada perubahan struktur tabel
     // await db.sync({ alter: true });
 
-    await store.sync(); // Sinkronisasi tabel session (AMAN DI PRODUCTION)
+    await sessionStore.sync(); // Sinkronisasi tabel session (AMAN DI PRODUCTION)
     console.log("✅ Session table synced");
 
     // Jalankan seed admin kalau env `RUN_SEED_ADMIN=true`
@@ -53,7 +50,7 @@ const store = new sessionStore({
 app.use(
   cors({
     credentials: true, // allow pengiriman cookie di CORS
-    origin: ["http://localhost:5173", "https://kepegawaian-client.vercel.app"],
+    origin: CLIENT_URL,
   })
 );
 
@@ -63,7 +60,7 @@ app.use(
     secret: process.env.SESS_SECRET, // untuk assign cookie
     resave: false, // Tidak menyimpan sesi jika tidak ada perubahan
     saveUninitialized: false, // Tidak menyimpan sesi yang baru kecuali sudah dimodifikasi
-    store: store, // Store untuk menyimpan sesi di database
+    store: sessionStore, // Store untuk menyimpan sesi di database
     cookie: {
       secure: true, // false di lokal, true di production (HTTPS)
       sameSite: "none", // Mencegah pengiriman cookie ke situs lain, `none` untuk production, lax untuk local
@@ -75,7 +72,6 @@ app.use(
 
 // Middleware
 app.use(express.json());
-
 app.use("/images", express.static("./images"));
 app.use("/docfiles", express.static("./docfiles"));
 
