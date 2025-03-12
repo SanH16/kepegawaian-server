@@ -3,7 +3,7 @@ import cors from "cors";
 import session from "express-session";
 import dotenv from "dotenv";
 import db from "./config/Database.js";
-import SequelizeStore from "connect-session-sequelize";
+import connectSessionSequelize from "connect-session-sequelize";
 import UserRoute from "./routes/UserRoute.js";
 import RekrutmenRoute from "./routes/RekrutmenRoute.js";
 import AuthRoute from "./routes/AuthRoute.js";
@@ -24,7 +24,12 @@ const port = process.env.PORT || 5000;
 const CLIENT_URL = process.env.CLIENT_URL || "https://kepegawaian-client.vercel.app";
 
 const app = express();
-const sessionStore = new SequelizeStore({ db });
+// Setup session store
+const SequelizeStore = connectSessionSequelize(session.Store);
+
+const sessionStore = new SequelizeStore({
+  db: db,
+});
 
 (async () => {
   try {
@@ -74,6 +79,12 @@ app.use(
 app.use(express.json());
 app.use("/images", express.static("./images"));
 app.use("/docfiles", express.static("./docfiles"));
+
+// Debugging session
+app.use((req, res, next) => {
+  console.log("Session Middleware:", req.session);
+  next();
+});
 
 // route
 app.use(UserRoute);
