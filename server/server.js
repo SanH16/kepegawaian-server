@@ -19,7 +19,7 @@ import PromosiRoute from "./routes/PromosiRoute.js";
 import PunishmentRoute from "./routes/PunishmentRoute.js";
 
 dotenv.config();
-const port = process.env.APP_PORT;
+const port = process.env.PORT;
 
 const app = express();
 const sessionStore = SequelizeStore(session.Store);
@@ -56,7 +56,7 @@ app.use("/docfiles", express.static("./docfiles"));
 app.use(
   cors({
     credentials: true, // allow pengiriman cookie di CORS
-    origin: ["http://localhost:5173", process.env.CLIENT_URL],
+    origin: ["http://localhost:5173", process.env.CLIENT_URL, process.env.SERVER_URL],
   })
 );
 app.use(express.json());
@@ -76,7 +76,7 @@ app.use(PhkRoute);
 app.use(PromosiRoute);
 app.use(PunishmentRoute);
 
-// store.sync(); // sinkronisasi table session di db
+store.sync(); // sinkronisasi table session di db
 // store.sync({force: true}); // sinkronisasi table session di db dan menghapus data lama
 
 app.listen(port, () => {
