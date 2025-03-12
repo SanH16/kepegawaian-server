@@ -75,6 +75,12 @@ app.use(express.json());
 app.use("/images", express.static("./images"));
 app.use("/docfiles", express.static("./docfiles"));
 
+// Debugging session
+app.use((req, res, next) => {
+  console.log("Session Middleware:", req.session);
+  next();
+});
+
 // route
 app.use(UserRoute);
 app.use(RekrutmenRoute);
