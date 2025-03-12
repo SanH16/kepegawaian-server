@@ -7,6 +7,7 @@ const db = new Sequelize(process.env.DATABASE, process.env.DB_USERNAME, process.
   host: process.env.DB_HOST,
   dialect: "mysql",
   port: process.env.DB_PORT || 3306,
+  logging: false,
   dialectOptions: {
     ssl: {
       require: true,
