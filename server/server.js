@@ -17,6 +17,7 @@ import RewardRoute from "./routes/RewardRoute.js";
 import PhkRoute from "./routes/PhkRoute.js";
 import PromosiRoute from "./routes/PromosiRoute.js";
 import PunishmentRoute from "./routes/PunishmentRoute.js";
+import { seedAdmin } from "./config/seedAdmin.js";
 
 dotenv.config();
 const port = process.env.PORT;
@@ -38,6 +39,12 @@ const store = new sessionStore({
 
     await store.sync(); // Sinkronisasi tabel session (AMAN DI PRODUCTION)
     console.log("Session table synced");
+
+    // Jalankan seed admin kalau env `RUN_SEED_ADMIN=true`
+    if (process.env.RUN_SEED_ADMIN === "true") {
+      await seedAdmin();
+      console.log("Admin seeding completed.");
+    }
   } catch (error) {
     console.error("Database error:", error);
   }
