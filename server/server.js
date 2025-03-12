@@ -53,7 +53,7 @@ const store = new sessionStore({
 app.use(
   cors({
     credentials: true, // allow pengiriman cookie di CORS
-    origin: ["http://localhost:5173", process.env.CLIENT_URL, process.env.SERVER_URL],
+    origin: ["http://localhost:5173", "https://kepegawaian-client.vercel.app"],
   })
 );
 
@@ -65,8 +65,8 @@ app.use(
     saveUninitialized: false, // Tidak menyimpan sesi yang baru kecuali sudah dimodifikasi
     store: store, // Store untuk menyimpan sesi di database
     cookie: {
-      secure: process.env.NODE_ENV === "production", // false di lokal, true di production (HTTPS)
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Mencegah pengiriman cookie ke situs lain, `none` untuk production
+      secure: true, // false di lokal, true di production (HTTPS)
+      sameSite: none, // Mencegah pengiriman cookie ke situs lain, `none` untuk production, lax untuk local
       maxAge: 1000 * 60 * 60 * 24, // expire cookie (1 hari)
       httpOnly: true, //set true buat production
     },
