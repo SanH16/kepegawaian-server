@@ -32,23 +32,30 @@ const store = new sessionStore({
 (async () => {
   try {
     await db.authenticate(); // Cek koneksi database
-    console.log("Database Connected...");
+    console.log("✅ Database Connected...");
 
     // Uncomment ini HANYA kalau ada perubahan struktur tabel
     // await db.sync({ alter: true });
 
     await store.sync(); // Sinkronisasi tabel session (AMAN DI PRODUCTION)
-    console.log("Session table synced");
+    console.log("✅ Session table synced");
 
     // Jalankan seed admin kalau env `RUN_SEED_ADMIN=true`
     if (process.env.RUN_SEED_ADMIN === "true") {
       await seedAdmin();
-      console.log("Admin seeding completed.");
+      console.log("✅ Admin seeding completed.");
     }
   } catch (error) {
-    console.error("Database error:", error);
+    console.error("❌ Database error:", error);
   }
 })();
+
+app.use(
+  cors({
+    credentials: true, // allow pengiriman cookie di CORS
+    origin: ["http://localhost:5173", process.env.CLIENT_URL, process.env.SERVER_URL],
+  })
+);
 
 app.use(
   session({
@@ -58,7 +65,7 @@ app.use(
     saveUninitialized: false, // Tidak menyimpan sesi yang baru kecuali sudah dimodifikasi
     store: store, // Store untuk menyimpan sesi di database
     cookie: {
-      secure: process.env.NODE_ENV === "production" ? true : false, // false di lokal, true di production (HTTPS)
+      secure: process.env.NODE_ENV === "production", // false di lokal, true di production (HTTPS)
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Mencegah pengiriman cookie ke situs lain, `none` untuk production
       maxAge: 1000 * 60 * 60 * 24, // expire cookie (1 hari)
       httpOnly: true, //set true buat production
@@ -66,17 +73,11 @@ app.use(
   })
 );
 
-app.use("/images", express.static("./images"));
-app.use("/docfiles", express.static("./docfiles"));
-app.use(
-  cors({
-    credentials: true, // allow pengiriman cookie di CORS
-    origin: ["http://localhost:5173", process.env.CLIENT_URL, process.env.SERVER_URL],
-  })
-);
-
 // Middleware
 app.use(express.json());
+
+app.use("/images", express.static("./images"));
+app.use("/docfiles", express.static("./docfiles"));
 
 // route
 app.use(UserRoute);
