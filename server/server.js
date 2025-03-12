@@ -28,12 +28,12 @@ const store = new sessionStore({
   db: db,
 });
 
-// (async () => {
-//   // Generate table di db
-//   // await db.sync();
-//   await db.sync({ alter: true }); // sinkronisasi schema table to db
-//   // await store.sync(); // Sinkronisasi tabel sessions
-// })();
+(async () => {
+  // Generate table di db
+  // await db.sync();
+  await db.sync({ alter: true }); // sinkronisasi schema table to db
+  // await store.sync(); // Sinkronisasi tabel sessions
+})();
 
 app.use(
   session({
@@ -43,10 +43,10 @@ app.use(
     saveUninitialized: false, // Tidak menyimpan sesi yang baru kecuali sudah dimodifikasi
     store: store, // Store untuk menyimpan sesi di database
     cookie: {
-      secure: false, // Set ke true jika menggunakan HTTPS
+      secure: process.env.NODE_ENV === "production", // Set ke true jika menggunakan HTTPS
       sameSite: "strict", // Mencegah pengiriman cookie ke situs lain
       maxAge: 1000 * 60 * 60 * 24, // expire cookie (1 hari)
-      httpOnly: false,
+      httpOnly: true, //set true buat production
     },
   })
 );
@@ -56,7 +56,7 @@ app.use("/docfiles", express.static("./docfiles"));
 app.use(
   cors({
     credentials: true, // allow pengiriman cookie di CORS
-    origin: "http://localhost:5173",
+    origin: ["http://localhost:5173", process.env.CLIENT_URL],
   })
 );
 app.use(express.json());
