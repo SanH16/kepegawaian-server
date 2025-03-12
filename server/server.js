@@ -28,12 +28,12 @@ const store = new sessionStore({
   db: db,
 });
 
-(async () => {
-  // Generate table di db
-  // await db.sync();
-  await db.sync({ alter: true }); // sinkronisasi schema table to db
-  // await store.sync(); // Sinkronisasi tabel sessions
-})();
+// (async () => {
+//   // Generate table di db
+//   // await db.sync();
+//   await db.sync({ alter: true }); // sinkronisasi schema table to db
+//   // await store.sync(); // Sinkronisasi tabel sessions
+// })();
 
 app.use(
   session({
@@ -76,7 +76,7 @@ app.use(PhkRoute);
 app.use(PromosiRoute);
 app.use(PunishmentRoute);
 
-store.sync(); // sinkronisasi table session di db
+// store.sync(); // sinkronisasi table session di db
 // store.sync({force: true}); // sinkronisasi table session di db dan menghapus data lama
 
 app.listen(port, () => {
