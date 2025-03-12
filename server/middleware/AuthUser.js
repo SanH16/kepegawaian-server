@@ -3,7 +3,7 @@ import User from "../models/UserModel.js";
 export const verifyUser = async (req, res, next) => {
   console.log("Session data in verifyUser:", req.session);
   // periksa uuid di sesi
-  if (!req.session?.userId) {
+  if (!req.session || !req.session?.userId) {
     return res.status(401).json({ msg: "Mohon login ke akun Anda!" });
   }
 
