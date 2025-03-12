@@ -15,7 +15,14 @@ export const Login = async (req, res) => {
 
   req.session.userId = user.uuid;
   console.log("User logged in, session ID:", req.session.userId);
-  console.log("Session data:", req.session);
+
+  res.cookie("token", req.sessionID, {
+    path: "/",
+    httpOnly: true,
+    secure: true,
+    sameSite: "none",
+    maxAge: 1000 * 60 * 60 * 24, // 1 hari
+  });
 
   const uuid = user.uuid;
   const name = user.name;
