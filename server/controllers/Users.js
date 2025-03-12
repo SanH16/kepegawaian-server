@@ -53,24 +53,21 @@ export const updateUser = async (req, res) => {
   if (!user) return res.status(404).json({ msg: "User tidak ditemukan" });
   const { name, email, password, confPassword, role } = req.body;
 
-  let hashPassword;
-  if (password === "" || password === null) {
-    //jika user tdk input password / kosong
-    hashPassword = user.password; //maka ambil password yg ada di db
-  } else {
-    // jika user kirim password maka update & hash lagi pw user yg baru
+  let hashPassword = user.password;
+  if (password && password === confPassword) {
     hashPassword = await argon2.hash(password);
+  } else if (password !== confPassword) {
+    return res.status(400).json({ msg: "Password dan Confirm password tidak cocok" });
   }
 
-  if (password !== confPassword) return res.status(400).json({ msg: "Password dan Confirm password tidak cocok" });
   // jika semua validasi sukses, next update isi dari db
   try {
     await User.update(
       {
-        name: name,
-        email: email,
+        name: name || user.name,
+        email: email || user.email,
         password: hashPassword,
-        role: role,
+        role: role || user.role,
       },
       {
         where: {

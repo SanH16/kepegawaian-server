@@ -28,12 +28,20 @@ const store = new sessionStore({
   db: db,
 });
 
-// (async () => {
-//   // Generate table di db
-//   // await db.sync();
-//   await db.sync({ alter: true }); // sinkronisasi schema table to db
-//   // await store.sync(); // Sinkronisasi tabel sessions
-// })();
+(async () => {
+  try {
+    await db.authenticate(); // Cek koneksi database
+    console.log("Database Connected...");
+
+    // Uncomment ini HANYA kalau ada perubahan struktur tabel
+    // await db.sync({ alter: true });
+
+    await store.sync(); // Sinkronisasi tabel session (AMAN DI PRODUCTION)
+    console.log("Session table synced");
+  } catch (error) {
+    console.error("Database error:", error);
+  }
+})();
 
 app.use(
   session({
@@ -43,8 +51,8 @@ app.use(
     saveUninitialized: false, // Tidak menyimpan sesi yang baru kecuali sudah dimodifikasi
     store: store, // Store untuk menyimpan sesi di database
     cookie: {
-      secure: process.env.NODE_ENV === "production", // Set ke true jika menggunakan HTTPS
-      sameSite: "strict", // Mencegah pengiriman cookie ke situs lain
+      secure: process.env.NODE_ENV === "production" ? true : false, // false di lokal, true di production (HTTPS)
+      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Mencegah pengiriman cookie ke situs lain, `none` untuk production
       maxAge: 1000 * 60 * 60 * 24, // expire cookie (1 hari)
       httpOnly: true, //set true buat production
     },
@@ -59,6 +67,8 @@ app.use(
     origin: ["http://localhost:5173", process.env.CLIENT_URL, process.env.SERVER_URL],
   })
 );
+
+// Middleware
 app.use(express.json());
 
 // route
@@ -76,9 +86,7 @@ app.use(PhkRoute);
 app.use(PromosiRoute);
 app.use(PunishmentRoute);
 
-// store.sync(); // sinkronisasi table session di db
-// store.sync({force: true}); // sinkronisasi table session di db dan menghapus data lama
-
+// Start Server
 app.listen(port, () => {
   console.log(`Server up and running on port ${port}`);
 });

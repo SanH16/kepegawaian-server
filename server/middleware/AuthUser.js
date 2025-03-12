@@ -1,14 +1,13 @@
 import User from "../models/UserModel.js";
 
 export const verifyUser = async (req, res, next) => {
+  console.log("Session data in verifyUser:", req.session);
+  // periksa uuid di sesi
+  if (!req.session?.userId) {
+    return res.status(401).json({ msg: "Mohon login ke akun Anda!" });
+  }
+
   try {
-    console.log("Session data in verifyUser:", req.session);
-
-    // periksa uuid di sesi
-    if (!req.session.userId) {
-      return res.status(401).json({ msg: "Mohon login ke akun Anda!" });
-    }
-
     // cari pengguna berdasarkan userId dari sesi
     const user = await User.findOne({
       where: {
