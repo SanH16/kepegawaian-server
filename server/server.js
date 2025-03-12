@@ -66,7 +66,7 @@ app.use(
     store: store, // Store untuk menyimpan sesi di database
     cookie: {
       secure: true, // false di lokal, true di production (HTTPS)
-      sameSite: none, // Mencegah pengiriman cookie ke situs lain, `none` untuk production, lax untuk local
+      sameSite: "none", // Mencegah pengiriman cookie ke situs lain, `none` untuk production, lax untuk local
       maxAge: 1000 * 60 * 60 * 24, // expire cookie (1 hari)
       httpOnly: true, //set true buat production
     },
