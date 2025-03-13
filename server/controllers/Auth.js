@@ -19,10 +19,11 @@ export const Login = async (req, res) => {
   res.cookie("token", req.sessionID, {
     path: "/",
     httpOnly: true,
-    secure: true,
-    sameSite: "none",
+    secure: process.env.NODE_ENV === "production",
+    sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24, // 1 hari
   });
+  console.log("Set-Cookie berhasil dikirim:", req.sessionID);
 
   const uuid = user.uuid;
   const name = user.name;
@@ -65,6 +66,7 @@ export const LogOut = (req, res) => {
       sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     });
 
+    console.log("Cookie dan session berhasil dihapus");
     res.status(200).json({ msg: "Anda telah logout" });
   });
 };
