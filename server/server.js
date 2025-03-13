@@ -18,6 +18,7 @@ import PhkRoute from "./routes/PhkRoute.js";
 import PromosiRoute from "./routes/PromosiRoute.js";
 import PunishmentRoute from "./routes/PunishmentRoute.js";
 import { seedAdmin } from "./config/seedAdmin.js";
+import cookieParser from "cookie-parser";
 
 dotenv.config();
 const port = process.env.PORT || 5000;
@@ -69,6 +70,7 @@ app.use(
   })
 );
 
+app.use(cookieParser());
 app.use(
   session({
     name: "token", // Nama cookie untuk menyimpan session ID
