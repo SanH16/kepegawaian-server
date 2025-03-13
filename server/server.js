@@ -79,8 +79,8 @@ app.use(
     saveUninitialized: false, // Tidak menyimpan sesi yang baru kecuali sudah dimodifikasi
     store: sessionStore, // Store untuk menyimpan sesi di database
     cookie: {
-      secure: process.env.NODE_ENV === "production", // false di lokal, true di production (HTTPS)
-      sameSite: process.env.NODE_ENV === "production" ? "none" : "lax", // Mencegah pengiriman cookie ke situs lain, `none` untuk production, lax untuk local
+      secure: true, // false di lokal, true di production (HTTPS)
+      sameSite: "None", // Mencegah pengiriman cookie ke situs lain, `none` untuk production, lax untuk local
       maxAge: 1000 * 60 * 60 * 24, // expire cookie (1 hari)
       httpOnly: true, //set true buat production
     },
