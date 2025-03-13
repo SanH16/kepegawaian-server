@@ -16,16 +16,17 @@ export const Login = async (req, res) => {
   req.session.userId = user.uuid;
   console.log("User logged in, session ID:", req.session.userId);
 
-  res.cookie("token", req.session.userId, {
+  const sessionToken = req.sessionID;
+  res.cookie("token", sessionToken, {
     path: "/",
     httpOnly: true,
     secure: process.env.NODE_ENV === "production",
     sameSite: process.env.NODE_ENV === "production" ? "none" : "lax",
     maxAge: 1000 * 60 * 60 * 24, // 1 hari
   });
-  console.log("Set-Cookie berhasil dikirim:", req.session.userId);
+  console.log("Set-Cookie berhasil dikirim:", sessionToken);
 
-  res.status(200).json({ uuid: user.uuid, name: user.name, email: user.email, role: user.role });
+  res.status(200).json({ uuid: user.uuid, name: user.name, email: user.email, role: user.role, token: req.sessionID });
 };
 
 export const GetUserLogin = async (req, res) => {
