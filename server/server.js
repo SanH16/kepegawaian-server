@@ -36,22 +36,32 @@ const sessionStore = new SequelizeStore({
     await db.authenticate(); // Cek koneksi database
     console.log("✅ Database Connected...");
 
-    // Uncomment ini HANYA kalau ada perubahan struktur tabel
-    // await db.sync({ alter: true });
+    // Uncomment ini HANYA kalau ada perubahan struktur tabel di DEVELOPMENT
+    if (process.env.NODE_ENV === "development") {
+      // await db.sync({ alter: true });
+      console.log("⚠️ Running db.sync({ alter: true }) is only for development!");
+    }
 
-    await sessionStore.sync(); // Sinkronisasi tabel session (AMAN DI PRODUCTION)
-    console.log("✅ Session table synced");
+    // Sinkronisasi session store
+    await sessionStore
+      .sync()
+      .then(() => console.log("✅ Session table synced"))
+      .catch((err) => console.error("❌ Session store sync failed:", err.message));
 
     // Jalankan seed admin kalau env `RUN_SEED_ADMIN=true`
     if (process.env.RUN_SEED_ADMIN === "true") {
       await seedAdmin();
       console.log("✅ Admin seeding completed.");
     }
+
+    console.log("🚀 Server initialization complete!");
   } catch (error) {
-    console.error("❌ Database error:", error);
+    console.error("❌ Database error:", error.message, error.stack);
   }
 })();
 
+app.set("trust proxy", 1);
+// middleware cors
 app.use(
   cors({
     credentials: true, // allow pengiriman cookie di CORS

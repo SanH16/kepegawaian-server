@@ -25,11 +25,7 @@ export const Login = async (req, res) => {
   });
   console.log("Set-Cookie berhasil dikirim:", req.sessionID);
 
-  const uuid = user.uuid;
-  const name = user.name;
-  const email = user.email;
-  const role = user.role;
-  res.status(200).json({ uuid, name, email, role });
+  res.status(200).json({ uuid: user.uuid, name: user.name, email: user.email, role: user.role });
 };
 
 export const GetUserLogin = async (req, res) => {
