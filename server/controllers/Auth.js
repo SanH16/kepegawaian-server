@@ -16,15 +16,7 @@ export const Login = async (req, res) => {
   req.session.userId = user.uuid;
   console.log("User logged in, session ID:", req.session.userId);
 
-  res.cookie("token", req.sessionID, {
-    path: "/",
-    httpOnly: true,
-    secure: true,
-    sameSite: "None",
-    maxAge: 1000 * 60 * 60 * 24, // 1 hari
-  });
-
-  res.status(200).json({ uuid: user.uuid, name: user.name, email: user.email, role: user.role, token: req.token });
+  res.status(200).json({ uuid: user.uuid, name: user.name, email: user.email, role: user.role });
 };
 
 export const GetUserLogin = async (req, res) => {
