@@ -61,7 +61,7 @@ const sessionStore = new SequelizeStore({
   }
 })();
 
-app.set("trust proxy", 1);
+// app.set("trust proxy", 1);
 // middleware cors
 app.use(
   cors({
@@ -73,16 +73,17 @@ app.use(
 app.use(cookieParser());
 app.use(
   session({
-    name: "token", // Nama cookie untuk menyimpan session ID
-    secret: process.env.SESS_SECRET, // untuk assign cookie
-    resave: false, // Tidak menyimpan sesi jika tidak ada perubahan
-    saveUninitialized: false, // Tidak menyimpan sesi yang baru kecuali sudah dimodifikasi
-    store: sessionStore, // Store untuk menyimpan sesi di database
+    name: "token",
+    secret: process.env.SESS_SECRET,
+    resave: false,
+    saveUninitialized: false,
+    store: sessionStore,
     cookie: {
-      secure: true, // false di lokal, true di production (HTTPS)
-      sameSite: "None", // Mencegah pengiriman cookie ke situs lain, `none` untuk production, lax untuk local
-      maxAge: 1000 * 60 * 60 * 24, // expire cookie (1 hari)
-      httpOnly: true, //set true buat production
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000,
+      httpOnly: true,
+      path: "/",
     },
   })
 );
