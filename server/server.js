@@ -37,10 +37,10 @@ const sessionStore = new SequelizeStore({
     await db.authenticate(); // Cek koneksi database
     console.log("✅ Database Connected...");
 
-    // Uncomment ini HANYA kalau ada perubahan struktur tabel di DEVELOPMENT
-    if (process.env.NODE_ENV === "development") {
+    // Sync database berdasarkan environment variable
+    if (process.env.NODE_ENV === "production") {
       await db.sync({ alter: true });
-      console.log("⚠️ Running db.sync({ alter: true }) is only for development!");
+      console.log("⚠️ Database structure synchronized!");
     }
 
     // Sinkronisasi session store
