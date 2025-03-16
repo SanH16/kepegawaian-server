@@ -39,7 +39,7 @@ const sessionStore = new SequelizeStore({
 
     // Uncomment ini HANYA kalau ada perubahan struktur tabel di DEVELOPMENT
     if (process.env.NODE_ENV === "development") {
-      // await db.sync({ alter: true });
+      await db.sync({ alter: true });
       console.log("⚠️ Running db.sync({ alter: true }) is only for development!");
     }
 
@@ -91,7 +91,7 @@ app.use(
 
 // Middleware
 app.use(express.json());
-app.use("/images", express.static("./images"));
+// app.use("/images", express.static("./images"));
 app.use("/docfiles", express.static("./docfiles"));
 
 // Debugging session
