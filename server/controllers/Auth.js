@@ -14,9 +14,28 @@ export const Login = async (req, res) => {
   if (!match) return res.status(400).json({ msg: "Wrong Password" });
 
   req.session.userId = user.uuid;
-  console.log("User logged in, session ID:", req.session.userId);
+  req.session.save((err) => {
+    if (err) {
+      console.error("Session save error:", err);
+      return res.status(500).json({ msg: "Error saving session" });
+    }
 
-  res.status(200).json({ uuid: user.uuid, name: user.name, email: user.email, role: user.role });
+    const sessionToken = req.sessionID;
+    res.cookie("token", sessionToken, {
+      httpOnly: true,
+      secure: process.env.NODE_ENV === "production",
+      sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",
+      maxAge: 30 * 24 * 60 * 60 * 1000, // 30 days
+      path: "/",
+    });
+
+    res.status(200).json({
+      uuid: user.uuid,
+      name: user.name,
+      email: user.email,
+      role: user.role,
+    });
+  });
 };
 
 export const GetUserLogin = async (req, res) => {
