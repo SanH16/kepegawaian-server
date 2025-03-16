@@ -78,6 +78,7 @@ app.use(
     resave: false,
     saveUninitialized: false,
     store: sessionStore,
+    proxy: true,
     cookie: {
       secure: process.env.NODE_ENV === "production",
       sameSite: process.env.NODE_ENV === "production" ? "None" : "Lax",

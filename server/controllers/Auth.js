@@ -20,7 +20,7 @@ export const Login = async (req, res) => {
       return res.status(500).json({ msg: "Error saving session" });
     }
 
-    const sessionToken = req.sessionID;
+    const sessionToken = req.session.userId;
     res.cookie("token", sessionToken, {
       httpOnly: true,
       secure: process.env.NODE_ENV === "production",
