@@ -39,7 +39,7 @@ const sessionStore = new SequelizeStore({
 
     // Sync database berdasarkan environment variable
     if (process.env.NODE_ENV === "production") {
-      await db.sync({ alter: true });
+      // await db.sync({ alter: true });
       console.log("⚠️ Database structure synchronized!");
     }
 
