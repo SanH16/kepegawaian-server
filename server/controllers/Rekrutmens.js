@@ -114,7 +114,9 @@ export const createRekrutmen = async (req, res) => {
   if (!req.file) {
     return res.status(400).json({ msg: "No file uploaded" });
   }
-  const image_rekrutmen = req.file.filename;
+
+  // Convert image to base64
+  const image_rekrutmen = req.file.buffer.toString("base64");
 
   try {
     await Rekrutmen.create({
@@ -144,9 +146,9 @@ export const updateRekrutmen = async (req, res) => {
 
     const { title, tags, reference, image_desc, text_desc } = req.body;
 
-    let image_rekrutmen = rekrutmen.image_rekrutmen; // Default to current image
+    let image_rekrutmen = rekrutmen.image_rekrutmen;
     if (req.file) {
-      image_rekrutmen = req.file.filename; // Isi new image if uploaded
+      image_rekrutmen = req.file.buffer.toString("base64");
     }
 
     if (req.role === "admin") {
@@ -207,14 +209,8 @@ export const deleteRekrutmen = async (req, res) => {
   }
 };
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, "images");
-  },
-  filename: (req, file, cb) => {
-    cb(null, Date.now() + "-rekrutmen" + path.extname(file.originalname));
-  },
-});
+// Modified multer configuration to store in memory
+const storage = multer.memoryStorage();
 
 export const upload = multer({
   storage: storage,
@@ -222,11 +218,11 @@ export const upload = multer({
   fileFilter: (req, file, cb) => {
     const fileTypes = /jpeg|jpg|png|gif/;
     const mimeType = fileTypes.test(file.mimetype);
-    const extname = fileTypes.test(path.extname(file.originalname).toLocaleLowerCase());
+    const extname = fileTypes.test(path.extname(file.originalname).toLowerCase());
 
     if (mimeType && extname) {
       return cb(null, true);
     }
-    cb("Give proper files formate to upload");
+    cb("Give proper files format to upload");
   },
 }).single("image_rekrutmen");
