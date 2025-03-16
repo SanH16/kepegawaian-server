@@ -38,7 +38,7 @@ const Rekrutmens = db.define(
       },
     },
     image_rekrutmen: {
-      type: DataTypes.MEDIUMTEXT,
+      type: DataTypes.TEXT("medium"),
       allowNull: true,
     },
     image_desc: {
