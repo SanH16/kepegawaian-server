@@ -38,10 +38,11 @@ const sessionStore = new SequelizeStore({
     console.log("✅ Database Connected...");
 
     // Sync database berdasarkan environment variable
-    if (process.env.NODE_ENV === "production") {
-      // await db.sync({ alter: true });
-      console.log("⚠️ Database structure synchronized!");
-    }
+    const syncMsg =
+      process.env.NODE_ENV === "production"
+        ? "⏭️ Production: syncronized passed"
+        : (await db.sync(), "⚠️ Database structure synchronized!");
+    console.log(syncMsg);
 
     // Sinkronisasi session store
     await sessionStore
@@ -67,7 +68,7 @@ app.use(
   cors({
     credentials: true, // allow pengiriman cookie di CORS
     origin: CLIENT_URL,
-  })
+  }),
 );
 
 app.use(cookieParser());
@@ -86,12 +87,12 @@ app.use(
       httpOnly: true,
       path: "/",
     },
-  })
+  }),
 );
 
 // Middleware
 app.use(express.json());
-// app.use("/images", express.static("./images"));
+app.use("/images", express.static("./images"));
 app.use("/docfiles", express.static("./docfiles"));
 
 // Debugging session
