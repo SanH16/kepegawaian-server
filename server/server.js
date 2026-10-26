@@ -62,7 +62,15 @@ const sessionStore = new SequelizeStore({
   }
 })();
 
-// app.set("trust proxy", 1);
+app.set("trust proxy", 1);
+
+// production semua traffic masuk lewat HTTPS (via proxy SnapDeploy)
+if (process.env.NODE_ENV === "production") {
+  app.use((req, res, next) => {
+    req.headers["x-forwarded-proto"] = "https";
+    next();
+  });
+}
 // middleware cors
 app.use(
   cors({
